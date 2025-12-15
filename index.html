@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DigiFund - Platform Crowdfunding Mandiri untuk NGO & Yayasan</title>
+    
+    <!-- Tailwind CSS (via CDN) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts: Plus Jakarta Sans -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- AOS Animation Library CSS -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#10B981',   /* Emerald Green - Trust, Growth, Charity */
+                        secondary: '#F59E0B', /* Amber - Warmth, Action */
+                        dark: '#064E3B',      /* Deep Green */
+                        light: '#ECFDF5',     /* Very Light Green Background */
+                        zains: '#2563EB',     /* Zains.net Blue branding */
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Glassmorphism Navigation */
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(16, 185, 129, 0.1);
+        }
+        
+        /* Decorative Blobs */
+        .blob {
+            position: absolute;
+            filter: blur(90px);
+            z-index: -1;
+            opacity: 0.5;
+        }
+
+        /* Float Animation */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+            100% { transform: translateY(0px); }
+        }
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        /* Chart Animation */
+        @keyframes grow {
+            from { height: 0; }
+            to { height: var(--h); }
+        }
+        .bar {
+            animation: grow 2s ease-out forwards;
+        }
+
+        /* Prevent horizontal scroll on mobile */
+        html, body {
+            overflow-x: hidden;
+            max-width: 100vw;
+            width: 100%;
+        }
+        * {
+            box-sizing: border-box;
+        }
+        
+        /* Ensure containers don't overflow */
+        .max-w-7xl {
+            max-width: 100%;
+        }
+        
+        /* Fix decorative blobs on mobile */
+        @media (max-width: 640px) {
+            .blob {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body class="font-sans text-slate-600 antialiased overflow-x-hidden bg-light">
+
+    <!-- Decorative Blobs (Trust & Warmth) -->
+    <div class="blob bg-green-200 w-96 h-96 rounded-full top-0 left-0 -translate-x-1/2 -translate-y-1/2"></div>
+    <div class="blob bg-amber-200 w-80 h-80 rounded-full bottom-0 right-0 translate-x-1/3 translate-y-1/3"></div>
+
+    <!-- NAVBAR -->
+    <nav class="fixed w-full z-50 glass-nav transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16 sm:h-20">
+                <!-- Logo -->
+                <div class="flex-shrink-0 flex items-center gap-1.5 sm:gap-2 cursor-pointer min-w-0" onclick="window.scrollTo(0,0)">
+                    <div class="w-8 h-8 sm:w-10 sm:h-10 bg-primary rounded-xl flex items-center justify-center text-white font-bold text-lg sm:text-xl shadow-lg shadow-green-500/30 flex-shrink-0">
+                        <i class="fa-solid fa-hand-holding-heart"></i>
+                    </div>
+                    <span class="font-bold text-lg sm:text-2xl text-slate-800 tracking-tight truncate">DigiFund</span>
+                </div>
+
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex space-x-8 items-center">
+                    <a href="#solusi" class="text-slate-600 hover:text-primary font-medium transition">Solusi NGO</a>
+                    <a href="#fitur" class="text-slate-600 hover:text-primary font-medium transition">Fitur Donasi</a>
+                    <a href="#luxury-ai" class="text-slate-600 hover:text-primary font-medium transition">AI CS</a>
+                    <a href="#integrasi" class="text-slate-600 hover:text-primary font-medium transition">Laporan PSAK</a>
+                    <button class="bg-primary hover:bg-green-700 text-white px-6 py-2.5 rounded-full font-semibold transition shadow-lg shadow-green-500/30 transform hover:-translate-y-1">
+                        Buat Platform Sendiri
+                    </button>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <div class="md:hidden flex items-center">
+                    <button id="mobile-menu-btn" class="text-slate-600 hover:text-primary focus:outline-none p-1">
+                        <i class="fa-solid fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Menu Panel -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-t p-4 absolute w-full shadow-lg">
+            <a href="#solusi" class="block py-2 text-slate-600 font-medium">Solusi NGO</a>
+            <a href="#fitur" class="block py-2 text-slate-600 font-medium">Fitur Donasi</a>
+            <a href="#luxury-ai" class="block py-2 text-slate-600 font-medium">AI CS</a>
+            <a href="#integrasi" class="block py-2 text-slate-600 font-medium">Laporan PSAK</a>
+            <a href="#" class="block mt-4 text-center bg-primary text-white py-2 rounded-lg font-bold">Buat Platform Sendiri</a>
+        </div>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <section class="relative pt-24 sm:pt-32 pb-20 lg:pt-40 lg:pb-28 overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col lg:flex-row items-center gap-12">
+            
+            <!-- Left Content -->
+            <div class="lg:w-1/2 z-10 text-center lg:text-left w-full min-w-0">
+                <div class="inline-block px-4 py-1.5 mb-6 rounded-full bg-green-100 border border-green-200 text-primary font-bold text-sm shadow-sm" data-aos="fade-right">
+                    📈 Solusi NGO Naik Kelas
+                </div>
+                <h1 class="text-3xl sm:text-4xl lg:text-6xl font-extrabold text-slate-900 leading-tight mb-6 px-0" data-aos="fade-up" data-aos-delay="100">
+                    Stop "Numpang" Galang Dana. <br>
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-green-600">Miliki Platform Sendiri</span> Tanpa Potongan Besar.
+                </h1>
+                <p class="text-base sm:text-lg text-slate-600 mb-8 leading-relaxed px-0" data-aos="fade-up" data-aos-delay="200">
+                    Miliki database donatur 100%, sistem donasi white-label atas nama Yayasan Anda, dan otomatisasi laporan keuangan standar PSAK.
+                </p>
+                
+                <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start" data-aos="fade-up" data-aos-delay="300">
+                    <button class="bg-secondary hover:bg-amber-600 text-white text-lg px-8 py-4 rounded-full font-bold shadow-xl shadow-amber-500/30 transition transform hover:-translate-y-1 flex items-center justify-center gap-2">
+                        Lihat Fitur <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                    <button class="bg-white border-2 border-slate-200 text-slate-700 hover:border-primary hover:text-primary text-lg px-8 py-4 rounded-full font-bold transition flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-robot text-primary text-xl"></i> Demo AI CS
+                    </button>
+                </div>
+                
+                <div class="mt-8 flex items-center justify-center lg:justify-start gap-4 text-sm text-slate-500" data-aos="fade-in" data-aos-delay="500">
+                    <span class="flex items-center gap-1"><i class="fa-solid fa-check-circle text-primary"></i> Data Milik Sendiri</span>
+                    <span class="flex items-center gap-1"><i class="fa-solid fa-check-circle text-primary"></i> Integrasi Akuntansi</span>
+                </div>
+            </div>
+
+            <!-- Right Visual: Dashboard & Donation App -->
+            <div class="lg:w-1/2 relative flex justify-center" data-aos="fade-left" data-aos-delay="200">
+                <div class="absolute inset-0 bg-gradient-to-tr from-green-200 to-white rounded-full opacity-60 blur-3xl transform scale-90"></div>
+                
+                <!-- Dashboard Mockup -->
+                <div class="relative w-full max-w-md bg-white rounded-2xl shadow-2xl border border-slate-100 p-6 animate-float">
+                    <!-- Header Mockup -->
+                    <div class="flex justify-between items-center mb-6">
+                        <div>
+                            <p class="text-xs text-slate-400 font-bold uppercase">Total Donasi Bulan Ini</p>
+                            <h3 class="text-3xl font-extrabold text-slate-800">Rp 1.250.000.000</h3>
+                            <p class="text-xs text-green-500 font-bold flex items-center gap-1"><i class="fa-solid fa-arrow-up"></i> +12% vs bulan lalu</p>
+                        </div>
+                        <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center text-primary"><i class="fa-solid fa-wallet"></i></div>
+                    </div>
+
+                    <!-- Campaign List -->
+                    <div class="space-y-4 mb-6">
+                        <div class="bg-slate-50 p-3 rounded-xl flex items-center gap-3">
+                            <div class="w-12 h-12 bg-slate-200 rounded-lg overflow-hidden flex-shrink-0">
+                                <img src="https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&w=200&q=80" class="w-full h-full object-cover">
+                            </div>
+                            <div class="flex-1">
+                                <h4 class="text-sm font-bold text-slate-800">Wakaf Sumur Desa</h4>
+                                <div class="w-full bg-slate-200 h-1.5 rounded-full mt-1">
+                                    <div class="bg-primary h-1.5 rounded-full" style="width: 75%"></div>
+                                </div>
+                            </div>
+                            <span class="text-xs font-bold text-primary">75%</span>
+                        </div>
+                        <div class="bg-slate-50 p-3 rounded-xl flex items-center gap-3">
+                            <div class="w-12 h-12 bg-slate-200 rounded-lg overflow-hidden flex-shrink-0">
+                                <img src="https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?auto=format&fit=crop&w=200&q=80" class="w-full h-full object-cover">
+                            </div>
+                            <div class="flex-1">
+                                <h4 class="text-sm font-bold text-slate-800">Beasiswa Yatim</h4>
+                                <div class="w-full bg-slate-200 h-1.5 rounded-full mt-1">
+                                    <div class="bg-secondary h-1.5 rounded-full" style="width: 40%"></div>
+                                </div>
+                            </div>
+                            <span class="text-xs font-bold text-secondary">40%</span>
+                        </div>
+                    </div>
+
+                    <!-- Floating Notification -->
+                    <div class="absolute -right-4 top-10 bg-white p-3 rounded-xl shadow-lg border-l-4 border-green-500 flex items-center gap-2 animate-bounce" style="animation-duration: 3s;">
+                        <i class="fa-brands fa-whatsapp text-green-500 text-2xl"></i>
+                        <div>
+                            <p class="text-[10px] font-bold text-slate-500">Notifikasi Terkirim</p>
+                            <p class="text-xs font-bold text-slate-800">"Terima kasih Kak Budi! 🙏"</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TRUST LOGOS -->
+    <section class="py-10 border-y border-green-100 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <p class="text-sm font-semibold text-slate-400 mb-6 uppercase tracking-wider">Dipercaya oleh 100+ NGO & Yayasan Naik Kelas</p>
+            <div class="flex flex-wrap justify-center items-center gap-8 md:gap-16 opacity-60 grayscale transition-all duration-500 hover:grayscale-0 hover:opacity-100">
+                <div class="flex items-center gap-2 font-bold text-xl text-slate-600"><i class="fa-solid fa-hands-holding-child text-primary"></i> Yayasan Peduli</div>
+                <div class="flex items-center gap-2 font-bold text-xl text-slate-600"><i class="fa-solid fa-mosque text-green-700"></i> Masjid Berkah</div>
+                <div class="flex items-center gap-2 font-bold text-xl text-slate-600"><i class="fa-solid fa-heart-pulse text-red-500"></i> Sehat Bersama</div>
+                <div class="flex items-center gap-2 font-bold text-xl text-slate-600"><i class="fa-solid fa-graduation-cap text-blue-500"></i> Cendekia</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PAIN VS GAIN (THE CORE MESSAGE) -->
+    <section id="solusi" class="py-20 bg-light">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16" data-aos="fade-up">
+                <h2 class="text-3xl md:text-4xl font-bold text-slate-900 mb-4">Kenapa Harus Punya Platform Sendiri?</h2>
+                <p class="text-lg text-slate-600 max-w-2xl mx-auto">Jangan biarkan aset terbesar yayasan Anda (Data Donatur) dikuasai platform lain.</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-8 items-center">
+                <!-- Numpang Platform -->
+                <div class="bg-white p-8 rounded-3xl border border-slate-200" data-aos="fade-up" data-aos-delay="100">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-10 h-10 rounded-full bg-red-50 flex items-center justify-center text-red-500"><i class="fa-solid fa-ban text-xl"></i></div>
+                        <h3 class="text-xl font-bold text-slate-500">Crowdfunding Orang Lain</h3>
+                    </div>
+                    <ul class="space-y-4">
+                        <li class="flex items-start gap-3">
+                            <i class="fa-solid fa-circle-xmark text-red-400 mt-1"></i>
+                            <span class="text-slate-500">Potongan donasi besar (5% - 10%), donatur merasa rugi.</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <i class="fa-solid fa-circle-xmark text-red-400 mt-1"></i>
+                            <span class="text-slate-500">Data donatur (No WA/Email) tidak dikasih ke Anda.</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <i class="fa-solid fa-circle-xmark text-red-400 mt-1"></i>
+                            <span class="text-slate-500">Branding yayasan tenggelam, kalah sama brand platform.</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <i class="fa-solid fa-circle-xmark text-red-400 mt-1"></i>
+                            <span class="text-slate-500">Pencairan dana lama & prosedur ribet.</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- DigiFund Way -->
+                <div class="bg-white p-8 rounded-3xl border-2 border-primary shadow-2xl relative transform md:scale-105" data-aos="fade-up" data-aos-delay="200">
+                    <div class="absolute -top-4 right-8 bg-secondary text-white px-4 py-1 rounded-full text-sm font-bold shadow-lg">
+                        ✨ Solusi DigiFund
+                    </div>
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center text-primary"><i class="fa-solid fa-check text-xl"></i></div>
+                        <h3 class="text-xl font-bold text-primary">Platform Milik Sendiri</h3>
+                    </div>
+                    <ul class="space-y-4">
+                        <li class="flex items-start gap-3">
+                            <i class="fa-solid fa-circle-check text-green-500 mt-1"></i>
+                            <span class="text-slate-800 font-medium">Potongan 0% Platform. Dana donatur maksimal untuk umat.</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <i class="fa-solid fa-circle-check text-green-500 mt-1"></i>
+                            <span class="text-slate-800 font-medium">Data Donatur 100% Milik Anda. Bisa di-follow up kapan saja.</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <i class="fa-solid fa-circle-check text-green-500 mt-1"></i>
+                            <span class="text-slate-800 font-medium">Domain & Branding Yayasan Sendiri (White Label).</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <i class="fa-solid fa-circle-check text-green-500 mt-1"></i>
+                            <span class="text-slate-800 font-medium">Laporan Keuangan Otomatis via Zains.net.</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CORE FEATURES -->
+    <section id="fitur" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16" data-aos="fade-up">
+                <span class="text-primary font-bold uppercase tracking-wider text-sm">Fitur Donasi Modern</span>
+                <h2 class="text-3xl font-bold text-slate-900 mt-2">Memudahkan Donatur Beramal Jariyah</h2>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Feature 1 -->
+                <div class="group bg-slate-50 p-8 rounded-3xl hover:bg-green-50 transition-all duration-300 border border-slate-100 hover:border-primary" data-aos="fade-up" data-aos-delay="100">
+                    <div class="w-14 h-14 bg-white rounded-2xl flex items-center justify-center text-primary text-3xl mb-6 shadow-sm group-hover:scale-110 transition">
+                        <i class="fa-solid fa-qrcode"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-3">Multi-Payment</h3>
+                    <p class="text-slate-600">Terima sedekah via QRIS, Virtual Account Bank, E-Wallet, hingga Kartu Kredit. Verifikasi otomatis 24 jam.</p>
+                </div>
+
+                <!-- Feature 2 -->
+                <div class="group bg-slate-50 p-8 rounded-3xl hover:bg-green-50 transition-all duration-300 border border-slate-100 hover:border-primary" data-aos="fade-up" data-aos-delay="200">
+                    <div class="w-14 h-14 bg-white rounded-2xl flex items-center justify-center text-green-600 text-3xl mb-6 shadow-sm group-hover:scale-110 transition">
+                        <i class="fa-brands fa-whatsapp"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-3">WhatsApp Notification</h3>
+                    <p class="text-slate-600">Notifikasi otomatis "Terima Kasih" & Doa ke WA donatur detik setelah transfer sukses. Meningkatkan trust.</p>
+                </div>
+
+                <!-- Feature 3 -->
+                <div class="group bg-slate-50 p-8 rounded-3xl hover:bg-green-50 transition-all duration-300 border border-slate-100 hover:border-primary" data-aos="fade-up" data-aos-delay="300">
+                    <div class="w-14 h-14 bg-white rounded-2xl flex items-center justify-center text-amber-500 text-3xl mb-6 shadow-sm group-hover:scale-110 transition">
+                        <i class="fa-solid fa-users-rays"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-3">Affiliate Campaign</h3>
+                    <p class="text-slate-600">Biarkan relawan ("Pasukan Amal") menyebarkan link campaign Anda. Sistem mencatat performa penggalangan dana per relawan.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- LUXURY FEATURE: AI CS AGENT -->
+    <section id="luxury-ai" class="py-24 bg-gradient-to-br from-slate-900 to-slate-800 text-white overflow-hidden relative">
+        <!-- Background accents -->
+        <div class="absolute top-0 right-0 w-1/2 h-full bg-primary opacity-10 blur-3xl rounded-l-full"></div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="flex flex-col lg:flex-row items-center gap-16">
+                <!-- Chat Simulation -->
+                <div class="lg:w-1/2" data-aos="fade-right">
+                    <div class="bg-white text-slate-800 p-6 rounded-3xl shadow-2xl relative max-w-sm mx-auto">
+                        <div class="flex items-center gap-3 border-b border-slate-100 pb-4 mb-4">
+                            <div class="relative">
+                                <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center text-primary overflow-hidden">
+                                    <img src="https://ui-avatars.com/api/?name=Admin+Ayu&background=10B981&color=fff" class="w-full h-full">
+                                </div>
+                                <div class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></div>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-sm">Ayu (AI Assistant)</h4>
+                                <p class="text-xs text-green-600 font-semibold">Online • Membalas cepat</p>
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-4 text-sm">
+                            <!-- User -->
+                            <div class="flex justify-end">
+                                <div class="bg-green-50 text-slate-700 px-4 py-2 rounded-l-xl rounded-tr-xl max-w-[85%]">
+                                    Min, mau tanya update sumur bor di NTT gimana?
+                                </div>
+                            </div>
+                            <!-- AI Reply -->
+                            <div class="flex justify-start">
+                                <div class="bg-slate-100 text-slate-800 px-4 py-2 rounded-r-xl rounded-tl-xl max-w-[90%] shadow-sm">
+                                    <span class="text-[10px] text-primary font-bold mb-1 block"><i class="fa-solid fa-wand-magic-sparkles"></i> AI Generating...</span>
+                                    Waalaikumsalam Kak! Alhamdulillah, progres sumur bor di NTT sudah 80% per hari ini 💧.
+                                    <br><br>
+                                    Air sudah mulai mengalir tapi pipanisasi ke rumah warga belum selesai. Mau lihat foto terbarunya Kak?
+                                </div>
+                            </div>
+                             <!-- User -->
+                             <div class="flex justify-end">
+                                <div class="bg-green-50 text-slate-700 px-4 py-2 rounded-l-xl rounded-tr-xl max-w-[85%]">
+                                    Boleh min..
+                                </div>
+                            </div>
+                             <!-- AI Reply -->
+                             <div class="flex justify-start">
+                                <div class="bg-slate-100 text-slate-800 px-4 py-2 rounded-r-xl rounded-tl-xl max-w-[90%] shadow-sm">
+                                    [Mengirim Foto Proyek]
+                                    <br>
+                                    Ini Kak fotonya. Terima kasih doa dan donasinya ya! Semoga jadi amal jariyah. 🙏
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Text -->
+                <div class="lg:w-1/2" data-aos="fade-left">
+                    <span class="bg-amber-500 text-white px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider mb-4 inline-block">Paket Luxury</span>
+                    <h2 class="text-3xl md:text-5xl font-bold mb-6 leading-tight">
+                        Customer Service AI<br>
+                        <span class="text-primary">Responsif & Humanis 24/7</span>
+                    </h2>
+                    <p class="text-slate-300 text-lg mb-8">
+                        Jangan biarkan calon donatur menunggu balasan chat. AI kami dilatih untuk menjawab pertanyaan, melakukan follow-up donatur yang "lupa transfer", dan memberikan update program dengan gaya bahasa manusiawi, bukan robot kaku.
+                    </p>
+                    <ul class="space-y-4 text-slate-300">
+                        <li class="flex items-center gap-3"><i class="fa-solid fa-check-circle text-primary"></i> Follow-up otomatis donatur macet</li>
+                        <li class="flex items-center gap-3"><i class="fa-solid fa-check-circle text-primary"></i> Update progress program otomatis</li>
+                        <li class="flex items-center gap-3"><i class="fa-solid fa-check-circle text-primary"></i> Personalisasi sapaan nama donatur</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- INTEGRATION ZAINS.NET -->
+    <section id="integrasi" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 class="text-3xl font-bold text-slate-900 mb-8" data-aos="fade-up">Laporan Keuangan Otomatis & Akuntabel</h2>
+            <div class="bg-blue-50 border border-blue-100 p-8 rounded-3xl flex flex-col md:flex-row items-center gap-8" data-aos="zoom-in">
+                <div class="md:w-1/3">
+                    <div class="bg-white p-6 rounded-2xl shadow-md text-center">
+                        <h4 class="font-bold text-zains text-2xl mb-2">zains.net</h4>
+                        <p class="text-xs text-slate-500">Accounting Software Partner</p>
+                        <div class="my-4 border-t border-slate-100"></div>
+                        <i class="fa-solid fa-arrow-right-arrow-left text-slate-400 text-xl"></i>
+                        <div class="my-4 border-t border-slate-100"></div>
+                        <h4 class="font-bold text-primary text-2xl mb-2">DigiFund</h4>
+                    </div>
+                </div>
+                <div class="md:w-2/3 text-left">
+                    <h3 class="text-2xl font-bold text-slate-900 mb-4">Integrasi Langsung ke Pembukuan</h3>
+                    <p class="text-slate-600 mb-6">
+                        Setiap donasi yang masuk di DigiFund otomatis tercatat sebagai jurnal penerimaan kas di Zains.net.
+                    </p>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-file-invoice text-zains"></i>
+                            <span class="text-sm font-bold text-slate-700">Laporan Posisi Keuangan</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-file-invoice text-zains"></i>
+                            <span class="text-sm font-bold text-slate-700">Laporan Aktivitas (ISAK 35)</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-file-invoice text-zains"></i>
+                            <span class="text-sm font-bold text-slate-700">Arus Kas Realtime</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-file-invoice text-zains"></i>
+                            <span class="text-sm font-bold text-slate-700">Audit Trail Lengkap</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PRICING -->
+    <section id="pricing" class="py-20 bg-light">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16" data-aos="fade-up">
+                <span class="text-primary font-bold uppercase tracking-wider text-sm">Investasi Yayasan</span>
+                <h2 class="text-3xl font-bold text-slate-900 mt-2">Pilih Paket Sesuai Kebutuhan</h2>
+                <p class="text-slate-600 mt-2">Tanpa potongan per donasi (0% Platform Fee).</p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8 items-start">
+                <!-- Standard -->
+                <div class="bg-white p-8 rounded-3xl border border-slate-200" data-aos="fade-up" data-aos-delay="100">
+                    <h3 class="text-xl font-bold text-slate-500 mb-2">Standard</h3>
+                    <p class="text-sm text-slate-400 mb-6">Untuk Yayasan Rintisan.</p>
+                    <div class="text-3xl font-extrabold text-slate-800 mb-6">IDR 499k<span class="text-sm font-normal text-slate-400">/bln</span></div>
+                    <button class="w-full border border-slate-300 text-slate-600 font-bold py-3 rounded-xl mb-8 hover:bg-slate-50">Pilih Standard</button>
+                    <ul class="space-y-3 text-sm text-slate-600">
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-green-500"></i> Website Donasi White Label</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-green-500"></i> Multi-Payment Gateway</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-green-500"></i> Notifikasi WA Basic</li>
+                        <li class="flex items-center gap-2 text-slate-400"><i class="fa-solid fa-minus"></i> Integrasi Zains.net</li>
+                        <li class="flex items-center gap-2 text-slate-400"><i class="fa-solid fa-minus"></i> AI CS Agent</li>
+                    </ul>
+                </div>
+
+                <!-- Pro -->
+                <div class="bg-white p-8 rounded-3xl border-2 border-primary shadow-2xl relative transform scale-105 z-10" data-aos="fade-up" data-aos-delay="200">
+                    <div class="absolute -top-4 inset-x-0 flex justify-center">
+                        <span class="bg-primary text-white px-4 py-1 rounded-full text-sm font-bold shadow-md">Best Value</span>
+                    </div>
+                    <h3 class="text-2xl font-bold text-primary mb-2">Pro NGO</h3>
+                    <p class="text-sm text-slate-400 mb-6">Untuk Yayasan Bertumbuh.</p>
+                    <div class="text-4xl font-extrabold text-slate-800 mb-6">IDR 1.2jt<span class="text-sm font-normal text-slate-400">/bln</span></div>
+                    <button class="w-full bg-primary hover:bg-green-700 text-white font-bold py-4 rounded-xl mb-8 transition shadow-lg shadow-green-500/30">Pilih Pro</button>
+                    <ul class="space-y-3 text-sm text-slate-700 font-medium">
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-primary"></i> <b>Semua Fitur Standard</b></li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-primary"></i> <span class="bg-green-100 text-green-800 px-1 rounded">Integrasi Zains.net (Accounting)</span></li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-primary"></i> Portal Login Donatur</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-primary"></i> Affiliate System</li>
+                        <li class="flex items-center gap-2 text-slate-400"><i class="fa-solid fa-minus"></i> AI CS Agent</li>
+                    </ul>
+                </div>
+
+                <!-- Luxury -->
+                <div class="bg-gradient-to-b from-slate-800 to-slate-900 p-8 rounded-3xl border border-slate-700 text-white shadow-xl" data-aos="fade-up" data-aos-delay="300">
+                    <div class="flex justify-between items-center mb-2">
+                        <h3 class="text-xl font-bold text-white">Luxury</h3>
+                        <i class="fa-solid fa-crown text-amber-400"></i>
+                    </div>
+                    <p class="text-sm text-slate-400 mb-6">Otomatisasi Penuh + AI.</p>
+                    <div class="text-3xl font-extrabold text-white mb-6">Hubungi Kami</div>
+                    <button class="w-full bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white font-bold py-3 rounded-xl mb-8 transition">Kontak Sales</button>
+                    <ul class="space-y-3 text-sm text-slate-300">
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-amber-400"></i> <b>Semua Fitur Pro</b></li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-amber-400"></i> AI CS Agent 24/7</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-amber-400"></i> Auto Follow-up Donatur</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-amber-400"></i> Konsultasi Fundraising</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-amber-400"></i> Prioritas Support</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TESTIMONIALS -->
+    <section class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-3xl font-bold text-center text-slate-900 mb-12" data-aos="fade-up">Kisah Sukses NGO</h2>
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="p-8 rounded-3xl bg-slate-50 border border-slate-100" data-aos="fade-right">
+                    <div class="flex text-amber-400 mb-4">
+                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                    </div>
+                    <p class="text-slate-700 italic mb-6">"Dulu kami pakai platform crowdfunding lain, potongannya lumayan besar. Sejak pakai DigiFund, kami hemat puluhan juta per tahun. Laporan keuangan juga langsung beres berkat integrasi Zains."</p>
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 bg-green-200 rounded-full flex items-center justify-center text-green-700 font-bold">UA</div>
+                        <div>
+                            <h4 class="font-bold text-slate-900">Ust. Abdullah</h4>
+                            <p class="text-sm text-slate-500">Ketua Yayasan Amal Mulia</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-8 rounded-3xl bg-slate-50 border border-slate-100" data-aos="fade-left">
+                    <div class="flex text-amber-400 mb-4">
+                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                    </div>
+                    <p class="text-slate-700 italic mb-6">"Fitur AI CS-nya luar biasa. Donatur yang lupa transfer disapa ulang sama AI dengan bahasa yang sopan, akhirnya jadi transfer. Konversi donasi naik drastis."</p>
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 bg-amber-200 rounded-full flex items-center justify-center text-amber-700 font-bold">SR</div>
+                        <div>
+                            <h4 class="font-bold text-slate-900">Siti Rahma</h4>
+                            <p class="text-sm text-slate-500">Manager Fundraising</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA FOOTER -->
+    <section class="py-20 bg-primary relative overflow-hidden">
+        <div class="absolute inset-0 bg-green-800 opacity-30"></div>
+        <div class="blob bg-amber-400 w-96 h-96 rounded-full absolute top-0 right-0 mix-blend-multiply filter blur-3xl opacity-30"></div>
+
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+            <h2 class="text-3xl md:text-5xl font-bold text-white mb-6" data-aos="zoom-in">Siap Bawa Yayasan Anda Naik Kelas?</h2>
+            <p class="text-green-50 text-lg mb-10 max-w-2xl mx-auto" data-aos="fade-up" data-aos-delay="100">
+                Miliki platform donasi profesional sendiri. Lebih hemat, lebih transparan, dan data 100% milik Anda.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center" data-aos="fade-up" data-aos-delay="200">
+                <button class="bg-white text-primary text-lg px-10 py-4 rounded-full font-bold shadow-xl transition transform hover:-translate-y-1 hover:shadow-2xl">
+                    Jadwalkan Demo Gratis
+                </button>
+                <button class="bg-transparent border-2 border-white text-white text-lg px-10 py-4 rounded-full font-bold hover:bg-white hover:text-primary transition">
+                    Konsultasi via WA
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="bg-dark text-slate-400 py-12 border-t border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid md:grid-cols-4 gap-8">
+            <div class="col-span-1 md:col-span-2">
+                <div class="flex items-center gap-2 mb-4 text-white">
+                    <i class="fa-solid fa-hand-holding-heart text-2xl text-primary"></i>
+                    <span class="font-bold text-2xl">DigiFund</span>
+                </div>
+                <p class="text-sm max-w-xs">Platform SaaS crowdfunding white-label untuk NGO dan Yayasan. Integrasi akuntansi, AI Customer Service, dan manajemen donatur terpusat.</p>
+            </div>
+            <div>
+                <h4 class="text-white font-bold mb-4">Fitur</h4>
+                <ul class="space-y-2 text-sm">
+                    <li><a href="#" class="hover:text-primary transition">Donasi Online</a></li>
+                    <li><a href="#" class="hover:text-primary transition">Accounting (Zains.net)</a></li>
+                    <li><a href="#" class="hover:text-primary transition">AI Assistant</a></li>
+                    <li><a href="#" class="hover:text-primary transition">Affiliate System</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-white font-bold mb-4">Kontak</h4>
+                <ul class="space-y-2 text-sm">
+                    <li><i class="fa-brands fa-whatsapp mr-2"></i> +62 812-9999-0000</li>
+                    <li><i class="fa-solid fa-envelope mr-2"></i> halo@digifund.id</li>
+                    <li><i class="fa-solid fa-location-dot mr-2"></i> Jakarta Selatan, Indonesia</li>
+                </ul>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto px-4 mt-12 pt-8 border-t border-slate-800 text-center text-xs">
+            &copy; 2025 DigiFund. Part of DigiEcosystem.
+        </div>
+    </footer>
+
+    <!-- SCRIPTS -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({ duration: 800, once: true, offset: 100 });
+        
+        // Mobile Menu
+        const btn = document.getElementById('mobile-menu-btn');
+        const menu = document.getElementById('mobile-menu');
+        btn.addEventListener('click', () => { menu.classList.toggle('hidden'); });
+
+        // Navbar Blur
+        window.addEventListener('scroll', () => {
+            const nav = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                nav.classList.add('shadow-sm');
+                nav.classList.replace('py-4', 'py-0'); 
+            } else {
+                nav.classList.remove('shadow-sm');
+            }
+        });
+    </script>
+</body>
+</html>
